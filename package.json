@@ -1,7 +1,7 @@
 {
   "name": "tickets-hub-backend",
-  "version": "1.0.0",
-  "description": "TICKETS HUB — Backend API",
+  "version": "1.1.0",
+  "description": "TICKETS HUB Backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
