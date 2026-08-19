@@ -17,10 +17,19 @@ router.post('/register', async (req, res) => {
     if (db.get('users').find({ email: email.toLowerCase() }).value())
       return res.status(409).json({ error: 'An account with this email already exists.' });
     const hashed = await bcrypt.hash(password, 12);
-    const user = { id: uuidv4(), firstName: firstName.trim(), lastName: lastName.trim(), email: email.toLowerCase().trim(), password: hashed, country: country.trim(), role: 'user', createdAt: new Date().toISOString() };
+    const user = {
+      id: uuidv4(),
+      firstName: firstName.trim(), lastName: lastName.trim(),
+      email: email.toLowerCase().trim(), password: hashed,
+      country: country.trim(), role: 'user',
+      createdAt: new Date().toISOString()
+    };
     db.get('users').push(user).write();
-    return res.status(201).json({ message: 'Account created successfully.', user: { id: user.id, firstName: user.firstName, email: user.email } });
-  } catch (err) { console.error(err); return res.status(500).json({ error: 'Server error.' }); }
+    return res.status(201).json({ message: 'Account created.', user: { id: user.id, firstName: user.firstName, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Server error.' });
+  }
 });
 
 router.post('/login', async (req, res) => {
@@ -35,9 +44,15 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Incorrect email or password.' });
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Incorrect email or password.' });
-    const token = jwt.sign({ id: user.id, role: user.role, email: user.email, name: user.firstName }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(
+      { id: user.id, role: user.role, email: user.email, name: user.firstName },
+      process.env.JWT_SECRET, { expiresIn: '7d' }
+    );
     return res.json({ token, user: { id: user.id, role: user.role, email: user.email, name: user.firstName, country: user.country } });
-  } catch (err) { console.error(err); return res.status(500).json({ error: 'Server error.' }); }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Server error.' });
+  }
 });
 
 router.get('/me', requireAuth, (req, res) => {

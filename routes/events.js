@@ -4,8 +4,8 @@ const db     = require('../db');
 const { requireAdmin } = require('../middleware/auth');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const events = db.get('events').value().sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+router.get('/', (_req, res) => {
+  const events = db.get('events').value().sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
   return res.json({ events });
 });
 
@@ -18,7 +18,13 @@ router.get('/:id', (req, res) => {
 router.post('/', requireAdmin, (req, res) => {
   const { artist, name, date, venue, status, desc, tiers, badge } = req.body;
   if (!artist || !name) return res.status(400).json({ error: 'Artist and name required.' });
-  const event = { id: uuidv4(), artist: artist.trim(), name: name.trim(), date: date?.trim()||'TBA', venue: venue?.trim()||'TBA', status: status||'upcoming', badge: badge||'new', desc: desc?.trim()||'', tiers: tiers||[], createdAt: new Date().toISOString() };
+  const event = {
+    id: uuidv4(), artist: artist.trim(), name: name.trim(),
+    date: date?.trim() || 'TBA', venue: venue?.trim() || 'TBA',
+    status: status || 'upcoming', badge: badge || 'new',
+    desc: desc?.trim() || '', tiers: tiers || [],
+    createdAt: new Date().toISOString()
+  };
   db.get('events').push(event).write();
   return res.status(201).json({ message: 'Event created.', event });
 });
@@ -43,8 +49,8 @@ router.put('/:id', requireAdmin, (req, res) => {
 });
 
 router.delete('/:id', requireAdmin, (req, res) => {
-  const event = db.get('events').find({ id: req.params.id }).value();
-  if (!event) return res.status(404).json({ error: 'Event not found.' });
+  if (!db.get('events').find({ id: req.params.id }).value())
+    return res.status(404).json({ error: 'Event not found.' });
   db.get('events').remove({ id: req.params.id }).write();
   return res.json({ message: 'Event deleted.' });
 });
