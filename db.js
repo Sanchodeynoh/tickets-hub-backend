@@ -1,7 +1,6 @@
 const low      = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-const adapter  = new FileSync('db.json');
-const db       = low(adapter);
+const db       = low(new FileSync('db.json'));
 
 db.defaults({
   users: [],
@@ -10,8 +9,8 @@ db.defaults({
   events: [
     {
       id: 'ev1', artist: 'BTS', name: 'ARIRANG WORLD TOUR 2026',
-      date: 'TBA 2026', venue: 'Multiple Cities', status: 'presale',
-      badge: 'presale', desc: 'BTS returns with their highly anticipated ARIRANG World Tour 2026.',
+      date: 'TBA 2026', venue: 'Multiple Cities', status: 'presale', badge: 'presale',
+      desc: 'BTS returns with their highly anticipated ARIRANG World Tour 2026.',
       tiers: [
         { name: 'VIP EXPERIENCE', price: 380 },
         { name: 'PREMIUM FLOOR',  price: 220 },
@@ -30,7 +29,7 @@ db.defaults({
     {
       id: 'ev3', artist: 'EXO', name: 'COMEBACK CONCERT 2026',
       date: 'TBA 2026', venue: 'TBA', status: 'upcoming', badge: 'new',
-      desc: "EXO's long-awaited comeback stage.",
+      desc: "EXO's long-awaited comeback.",
       tiers: [{ name: 'VIP', price: 280 }, { name: 'GENERAL', price: 85 }],
       createdAt: new Date().toISOString()
     }
